@@ -4,7 +4,7 @@ This document describes the high-level architecture and data flow of the Cloudin
 
 ## Overview
 
-The service is designed as a **Centralized Media Gateway**. It follows the standard NestJS modular architecture, emphasizing separation of concerns between media storage (Cloudinary), business logic (Upload orchestration), and data persistence (Prisma/SQLite).
+The service is designed as a **Centralized Media Gateway**. It follows the standard NestJS modular architecture, emphasizing separation of concerns between media storage (Cloudinary), business logic (Upload orchestration), and cloud-native data persistence (PostgreSQL).
 
 ## Core Components
 
@@ -23,14 +23,15 @@ Contains shared logic used across the application.
 - **Guards**: `ApiKeyGuard` intercepts all incoming requests to validate the `x-api-key` against the authorized projects list in the database.
 
 ### 4. Database Layer (`/prisma`)
-Managed via Prisma ORM using SQLite.
+Managed via Prisma ORM using **PostgreSQL**.
+- **Engine**: Optimized for cloud databases like **Neon.tech**.
 - **Project Model**: Stores authorized clients and their unique API keys.
 - **UploadLog Model**: Tracks every successful upload with its metadata and relationship to a Project.
 
 ## Request Lifecycle
 
 1.  **Authentication**: A request arrives at the API. The `ApiKeyGuard` extracts the `x-api-key` from the header.
-2.  **Validation**: The guard queries the SQLite database. If the key exists, the project metadata is attached to the Request object; otherwise, a `401 Unauthorized` is returned.
+2.  **Validation**: The guard queries the PostgreSQL database. If the key exists, the project metadata is attached to the Request object; otherwise, a `401 Unauthorized` is returned.
 3.  **Handling**: The `UploadController` receives the file/string and calls the `UploadService`.
 4.  **Processing**: The service calls `CloudinaryService` to stream the image to the cloud.
 5.  **Persistence**: Upon a successful cloud upload, a record is created in the `UploadLog` table.
@@ -47,7 +48,7 @@ graph TD
     E --> F[CloudinaryService]
     F --> G((Cloudinary API))
     G -- Result --> E
-    E --> H[(SQLite DB)]
+    E --> H[(PostgreSQL DB)]
     H -- Success --> I[Final JSON Response]
 ```
 
@@ -59,6 +60,6 @@ The service implements a **"Transformation at Delivery"** strategy. Instead of s
 
 ## Deployment Strategy
 
-The application is containerized using a **Multi-Stage Dockerfile**:
-- **Builder Stage**: Compiles TypeScript to JavaScript and generates Prisma Client.
-- **Production Stage**: Runs the compiled code on a lightweight Alpine Linux image, ensuring minimal footprint and security.
+The application is containerized and optimized for platforms like **Render**:
+- **Stateless Design**: By using an external PostgreSQL database (Neon), the application container remains stateless and can be safely restarted or scaled.
+- **CI/CD**: Designed to be deployed directly from GitHub to Render via Docker.

@@ -4,17 +4,18 @@ A centralized, modular, and reusable image upload service built with **NestJS**,
 
 ## Features
 
-- **Project-Based Security**: Secured by unique API keys managed in a local SQLite database.
+- **Project-Based Security**: Secured by unique API keys managed in a **PostgreSQL** database (optimized for **Neon.tech**).
 - **Hybrid Upload Methods**: Supports both `multipart/form-data` (files) and `Base64` string uploads.
 - **Auto-Optimization**: Automatically generates optimized URLs using Cloudinary's `f_auto` (format) and `q_auto` (quality) parameters.
-- **Transaction Logging**: All uploads are logged locally with metadata (URL, Public ID, size, format).
+- **Transaction Logging**: All uploads are logged in PostgreSQL with metadata (URL, Public ID, size, format).
 - **Swagger Documentation**: Interactive API documentation available at `/api`.
-- **Dockerized**: Ready for containerized deployment with `Docker` and `Colima`.
+- **Dockerized**: Ready for containerized deployment on platforms like **Render**, **Koyeb**, or **Railway**.
 
 ## Tech Stack
 
 - **Framework**: NestJS
-- **Database**: SQLite (via Prisma ORM)
+- **Database**: PostgreSQL (via Prisma ORM)
+- **Cloud Database**: Neon.tech
 - **Storage**: Cloudinary
 - **Documentation**: Swagger / OpenAPI
 - **Runtime**: Node.js / Docker
@@ -22,14 +23,16 @@ A centralized, modular, and reusable image upload service built with **NestJS**,
 ## Getting Started
 
 ### 1. Prerequisites
-- Node.js (v20+) or Docker/Colima
-- A Cloudinary account (Cloud Name, API Key, API Secret)
+- Node.js (v20+) or Docker
+- A Cloudinary account
+- A Neon.tech (PostgreSQL) database URL
 
 ### 2. Environment Variables
 Create a `.env` file in the root directory:
 
 ```env
-DATABASE_URL="file:./dev.db"
+# Database (Neon/Postgres)
+DATABASE_URL="postgresql://user:password@host/neondb?sslmode=require"
 
 # Cloudinary
 CLOUDINARY_CLOUD_NAME="your_cloud_name"
@@ -45,9 +48,8 @@ PORT=3000
 
 ### 3. Installation & Run
 
-#### Using Docker (Recommended)
+#### Using Docker (Recommended for Deployment)
 ```bash
-# Start with Colima or Docker Desktop
 docker-compose up -d --build
 ```
 
@@ -76,7 +78,7 @@ All requests must include the `x-api-key` header for authentication.
 | `POST` | `/v1/upload/multiple` | Upload multiple files (multipart) |
 | `POST` | `/v1/upload/base64` | Upload via base64 string |
 
-### Documentation
+## Documentation
 - [Architecture Overview](ARCHITECTURE.md)
 - [API Reference (Swagger)](http://localhost:3000/api)
 

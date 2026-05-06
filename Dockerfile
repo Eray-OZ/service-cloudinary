@@ -26,5 +26,5 @@ COPY --from=builder /app/prisma ./prisma
 
 EXPOSE 3000
 
-# Start command (migrations, seed, and finding the correct main.js)
-CMD npx prisma migrate deploy && npx prisma db seed && (node dist/main.js || node dist/src/main.js)
+# Start command (db push, seed, and finding the correct main.js)
+CMD npx prisma db push --accept-data-loss && npx prisma db seed && (node dist/main.js || node dist/src/main.js)
