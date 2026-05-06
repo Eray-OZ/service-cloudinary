@@ -80,7 +80,7 @@ All requests must include the `x-api-key` header for authentication.
 
 ## Documentation
 - [Architecture Overview](ARCHITECTURE.md)
-- [API Reference (Swagger)](http://localhost:3000/api)
+- [API Reference (Swagger)](http://localhost:3000/)
 
 ## License
 MIT
