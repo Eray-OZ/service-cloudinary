@@ -1,33 +1,40 @@
-import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
-import { randomUUID } from 'crypto';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  const name = 'Default Project';
-  const apiKey = `sk_${randomUUID().replace(/-/g, '')}`;
+  console.log('Starting database seeding...');
 
-  const project = await prisma.project.upsert({
-    where: { apiKey },
-    update: {},
-    create: {
-      name,
-      apiKey,
-    },
+  const apiKey = process.env.SEED_PROJECT_API_KEY || 'sk_371f4a919d604435918bd3f95a312297';
+  const projectName = 'Initial Project';
+
+  // Check if project already exists using apiKey (which is guaranteed to be unique)
+  let project = await prisma.project.findUnique({
+    where: { apiKey: apiKey },
   });
 
-  console.log('-----------------------------------');
-  console.log('Project Created Successfully!');
-  console.log('Name:', project.name);
-  console.log('API Key:', project.apiKey);
-  console.log('-----------------------------------');
-  console.log('Keep this API Key secret. Use it in the x-api-key header.');
+  if (!project) {
+    project = await prisma.project.create({
+      data: {
+        name: projectName,
+        apiKey: apiKey,
+      },
+    });
+    console.log('New project created.');
+  } else {
+    console.log('Project already exists, skipping creation.');
+  }
+
+  console.log('--------------------------------------------------');
+  console.log('Seeding completed successfully!');
+  console.log(`Project: ${project.name}`);
+  console.log(`API Key: ${project.apiKey}`);
+  console.log('--------------------------------------------------');
 }
 
 main()
   .catch((e) => {
-    console.error(e);
+    console.error('Seeding failed:', e);
     process.exit(1);
   })
   .finally(async () => {

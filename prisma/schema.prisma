@@ -12,7 +12,7 @@ datasource db {
 
 model Project {
   id        String   @id @default(uuid())
-  name      String
+  name      String   @unique
   apiKey    String   @unique
   createdAt DateTime @default(now())
   logs      UploadLog[]

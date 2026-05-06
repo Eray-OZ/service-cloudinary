@@ -5,6 +5,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
+    // Load .env variables globally
     ConfigModule.forRoot({ isGlobal: true }),
     UploadModule,
     CloudinaryModule,

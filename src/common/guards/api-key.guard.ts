@@ -10,7 +10,7 @@ export class ApiKeyGuard implements CanActivate {
     const apiKey = request.headers['x-api-key'];
 
     if (!apiKey) {
-      throw new UnauthorizedException('API key is missing');
+      throw new UnauthorizedException('API key is missing in headers');
     }
 
     const project = await this.prisma.project.findUnique({
@@ -18,10 +18,10 @@ export class ApiKeyGuard implements CanActivate {
     });
 
     if (!project) {
-      throw new UnauthorizedException('Invalid API key');
+      throw new UnauthorizedException('Invalid API key provided');
     }
 
-    // Attach project info to request for later use in logs
+    // Attach project metadata to the request object for logging
     request.project = project;
     return true;
   }

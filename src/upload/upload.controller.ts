@@ -11,7 +11,7 @@ import {
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { UploadService } from './upload.service';
 import { ApiKeyGuard } from '../common/guards/api-key.guard';
-import { ApiTags, ApiConsumes, ApiBody, ApiHeader, ApiOperation, ApiSecurity } from '@nestjs/swagger';
+import { ApiTags, ApiConsumes, ApiBody, ApiOperation, ApiSecurity } from '@nestjs/swagger';
 
 @ApiTags('Upload')
 @ApiSecurity('x-api-key')
@@ -42,7 +42,7 @@ export class UploadController {
   }
 
   @Post('multiple')
-  @ApiOperation({ summary: 'Upload multiple images' })
+  @ApiOperation({ summary: 'Upload multiple images at once' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -71,7 +71,7 @@ export class UploadController {
   }
 
   @Post('base64')
-  @ApiOperation({ summary: 'Upload an image as Base64 string' })
+  @ApiOperation({ summary: 'Upload an image from a base64 string' })
   @ApiBody({
     schema: {
       type: 'object',

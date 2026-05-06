@@ -10,6 +10,9 @@ export class UploadService {
     private prisma: PrismaService,
   ) {}
 
+  /**
+   * Orchestrates the upload of a multipart file
+   */
   async processUpload(
     file: Express.Multer.File,
     folder: string,
@@ -19,6 +22,9 @@ export class UploadService {
     return this.saveLog(result as UploadApiResponse, projectId);
   }
 
+  /**
+   * Orchestrates the upload of a base64 string
+   */
   async processBase64Upload(
     base64String: string,
     folder: string,
@@ -28,6 +34,9 @@ export class UploadService {
     return this.saveLog(result as UploadApiResponse, projectId);
   }
 
+  /**
+   * Saves the upload transaction to the local SQLite database
+   */
   private async saveLog(result: UploadApiResponse, projectId: string) {
     const optimizedUrl = this.cloudinary.getOptimizedUrl(result.public_id);
 

@@ -6,13 +6,16 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Global Validation
-  app.useGlobalPipes(new ValidationPipe());
+  // Enable global validation pipes
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true,
+    transform: true,
+  }));
 
-  // Swagger Setup
+  // Configure Swagger Documentation
   const config = new DocumentBuilder()
-    .setTitle('Cloudinary Upload Service')
-    .setDescription('Centralized image upload service for all projects')
+    .setTitle('Cloudinary Gateway Service')
+    .setDescription('Centralized image management gateway for multi-project environments')
     .setVersion('1.0')
     .addApiKey({ type: 'apiKey', name: 'x-api-key', in: 'header' }, 'x-api-key')
     .build();
@@ -21,8 +24,13 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   const port = process.env.PORT || 3000;
-  await app.listen(port);
-  console.log(`Application is running on: http://localhost:${port}`);
-  console.log(`Swagger documentation available at: http://localhost:${port}/api`);
+  
+  // Listen on 0.0.0.0 to allow access from outside the container
+  await app.listen(port, '0.0.0.0');
+  
+  console.log('--------------------------------------------------');
+  console.log(`Service is running on: http://localhost:${port}`);
+  console.log(`Swagger UI: http://localhost:${port}/api`);
+  console.log('--------------------------------------------------');
 }
 bootstrap();
