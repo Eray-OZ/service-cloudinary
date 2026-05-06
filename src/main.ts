@@ -19,17 +19,16 @@ async function bootstrap() {
     .setVersion('1.0')
     .addApiKey({ type: 'apiKey', name: 'x-api-key', in: 'header' }, 'x-api-key')
     .build();
-    
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
   const port = process.env.PORT || 3000;
-  
+
   // Listen on 0.0.0.0 to allow access from outside the container
   await app.listen(port, '0.0.0.0');
-  
+
   console.log('--------------------------------------------------');
-  console.log(`Service is running on: http://localhost:${port}`);
   console.log(`Swagger UI: http://localhost:${port}/api`);
   console.log('--------------------------------------------------');
 }
